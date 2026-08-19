@@ -72,7 +72,7 @@ PLAYERS = [
     ("FL1T", "俄罗斯", "PARIVISION", 25, "rifler", 1, 7, "独联体"),
     ("zweih", "俄罗斯", "PARIVISION", 18, "rifler", 0, 3, "独联体"),
     ("rain", "挪威", "100 Thieves", 31, "rifler", 1, 19, "欧洲"),
-    ("device", "丹麦", "100 Thieves", 30, "AWPer", 0, 2, "欧洲"),
+    ("device", "丹麦", "100 Thieves", 30, "AWPer", 4, 2, "欧洲"),
     ("EliGE", "美国", "Liquid", 29, "rifler", 0, 17, "北美洲"),
     ("NAF", "加拿大", "Liquid", 28, "rifler", 0, 14, "北美洲"),
     ("malbsMd", "危地马拉", "Liquid", 23, "rifler", 0, 4, "北美洲"),

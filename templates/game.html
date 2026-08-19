@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-center mb-4">弗一把（复刻版）</h1>
+
+{# ---- 提示信息：查无此人 / 胜负结果 ---- #}
+{% if message %}
+    <div class="alert alert-warning">{{ message }}</div>
+{% endif %}
+
+{% if over %}
+    {% if session.get('win') %}
+        <div class="alert alert-success">🎉 你猜对了！</div>
+    {% else %}
+        <div class="alert alert-danger">机会用完了，游戏结束。</div>
+    {% endif %}
+    <a href="{{ url_for('restart') }}" class="btn btn-primary">再来一局</a>
+{% else %}
+    {# ---- 猜测输入框 ---- #}
+    <form action="{{ url_for('guess') }}" method="post" class="d-flex gap-2 mb-4">
+        <input type="text" name="name" class="form-control"
+               placeholder="输入选手昵称，如 s1mple" required autofocus>
+        <button type="submit" class="btn btn-success">猜！</button>
+    </form>
+    <p class="text-secondary">剩余次数：{{ 8 - history|length }}</p>
+{% endif %}
+
+{# ---- 猜测历史表格 ---- #}
+{% if history %}
+<table class="table table-bordered text-center align-middle">
+    <thead>
+        <tr>
+            <th>选手</th><th>国家</th><th>队伍</th><th>年龄</th>
+            <th>位置</th><th>Major冠军</th><th>Major出场</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in history %}
+        <tr>
+            <td class="cell-{{ item.result.name }}">{{ item.guess.name }}</td>
+            <td class="cell-{{ item.result.country }}">{{ item.guess.country }}</td>
+            <td class="cell-{{ item.result.team }}">{{ item.guess.team }}</td>
+            <td class="cell-{{ item.result.age.color }}">
+                {{ item.guess.age }}
+                {% if item.result.age.direction == 'up' %}↑
+                {% elif item.result.age.direction == 'down' %}↓{% endif %}
+            </td>
+            <td class="cell-{{ item.result.position }}">{{ item.guess.position }}</td>
+            <td class="cell-{{ item.result.champions.color }}">
+                {{ item.guess.champions }}
+                {% if item.result.champions.direction == 'up' %}↑
+                {% elif item.result.champions.direction == 'down' %}↓{% endif %}
+            </td>
+            <td class="cell-{{ item.result.majors.color }}">
+                {{ item.guess.majors }}
+                {% if item.result.majors.direction == 'up' %}↑
+                {% elif item.result.majors.direction == 'down' %}↓{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
