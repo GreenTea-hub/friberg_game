@@ -11,15 +11,25 @@ def get_target():
         if p['id'] == session.get('target_id'):
             return p
     return None
+
+def render_game(message=None):
+    players = game.get_all_players()
+    answer = get_target() if session.get('over') else None
+    return render_template('game.html',
+                           history=session['history'],
+                           over=session['over'],
+                           answer=answer,
+                           players=players,
+                           message=message)
 @app.route('/')
 def index():
+    players = game.get_all_players()
     if 'target_id' not in session:
-        players = game.get_all_players()
         target = game.pick_target(players)
         session['target_id'] = target['id']
         session['history'] = []
         session['over'] = False
-    return render_template('game.html',history=session['history'],over=session['over'],message=None)
+    return render_game()
 
 @app.route('/guess',methods=['POST'])
 def guess():
@@ -29,8 +39,7 @@ def guess():
     players = game.get_all_players()
     guess_player = game.find_player_by_name(players, name)
     if guess_player is None:
-        return render_template('game.html',
-                               history=session['history'],over=False,message='查无此人')
+        return render_game(message=f'没有找到选手「{name}」，请检查拼写')
     target = get_target()
     result = game.compare(guess_player, target)
     history = session['history']

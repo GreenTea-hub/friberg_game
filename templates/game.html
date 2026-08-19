@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-center mb-4">弗一把（复刻版）</h1>
+<h1 class="text-center mb-4">弗一把</h1>
 
 {# ---- 提示信息：查无此人 / 胜负结果 ---- #}
 {% if message %}
@@ -10,18 +10,43 @@
 
 {% if over %}
     {% if session.get('win') %}
-        <div class="alert alert-success">🎉 你猜对了！</div>
+        <div class="alert alert-success">🎉 你猜对了！答案是 {{ answer.name }}！</div>
     {% else %}
-        <div class="alert alert-danger">机会用完了，游戏结束。</div>
+        <div class="alert alert-danger">
+            机会用完了，游戏结束。正确答案是 <strong>{{ answer.name }}</strong>
+        </div>
     {% endif %}
+
+    {# 答案卡片：展示完整信息，输赢都显示 #}
+    {% if answer %}
+    <div class="card bg-secondary text-light mb-3 mx-auto" style="max-width: 400px;">
+        <div class="card-body text-center">
+            <h4 class="card-title">{{ answer.name }}</h4>
+            <p class="card-text mb-0">
+                {{ answer.country }} · {{ answer.team }} · {{ answer.position }}<br>
+                {{ answer.age }} 岁 · Major 冠军 {{ answer.champions }} 次 · 出场 {{ answer.majors }} 次
+            </p>
+        </div>
+    </div>
+    {% endif %}
+
     <a href="{{ url_for('restart') }}" class="btn btn-primary">再来一局</a>
 {% else %}
-    {# ---- 猜测输入框 ---- #}
     <form action="{{ url_for('guess') }}" method="post" class="d-flex gap-2 mb-4">
-        <input type="text" name="name" class="form-control"
-               placeholder="输入选手昵称，如 s1mple" required autofocus>
-        <button type="submit" class="btn btn-success">猜！</button>
-    </form>
+    <input type="text" name="name" class="form-control"
+           placeholder="输入选手昵称，如 s1mple"
+           list="player-names"          {# ← 关联下面的 datalist #}
+           autocomplete="off"           {# ← 关掉浏览器自带的历史记录联想，避免干扰 #}
+           required autofocus>
+    <button type="submit" class="btn btn-success">猜！</button>
+</form>
+
+{# 候选列表：页面上不可见，只给输入框提供联想 #}
+<datalist id="player-names">
+    {% for p in players %}
+        <option value="{{ p['name'] }}">
+    {% endfor %}
+</datalist>
     <p class="text-secondary">剩余次数：{{ 8 - history|length }}</p>
 {% endif %}
 
@@ -31,7 +56,7 @@
     <thead>
         <tr>
             <th>选手</th><th>国家</th><th>队伍</th><th>年龄</th>
-            <th>位置</th><th>Major冠军</th><th>Major出场</th>
+            <th>位置</th><th>Major冠军</th><th>Major出场次数</th>
         </tr>
     </thead>
     <tbody>
